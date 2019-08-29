@@ -16,7 +16,7 @@ jobs:
           name: create env variables (Random values)
           command: |
             echo 'export SECRET_SAUCE='$((1 + RANDOM % 10)) >> $BASH_ENV
-            echo 'export PATH_TO_DATA_FILE=wct_app/data' >> $BASH_ENV
+            echo 'export PATH_TO_DATA_FILE=data' >> $BASH_ENV
             source $BASH_ENV
 
       - run:
