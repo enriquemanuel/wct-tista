@@ -24,7 +24,6 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            cd wct_app/
             pip install -r requirements.txt
 
       - run:
@@ -37,7 +36,6 @@ jobs:
           name: lint code
           command: |
             . venv/bin/activate
-            cd wct_app
             pylint --errors-only **/*.py
 
       - run:
@@ -46,14 +44,12 @@ jobs:
             . venv/bin/activate
             pwd
             ls -lsa
-            cd wct_app
             pytest --disable-warnings --quiet tests/wct_tests.py
 
       - run:
           name: validate that it runs and returns 200
           command: |
             . venv/bin/activate
-            cd wct_app
             gunicorn -D -w 4 --log-level debug --capture-output --error-logfile errors.log wct_app.main.app:APP
             curl -X POST http://localhost/api/v0/widgetize -d '{"widget_material":"make me a widget!"}'
 
