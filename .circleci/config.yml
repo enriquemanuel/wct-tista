@@ -1,0 +1,65 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7.4
+        environment:
+          SECRET_SAUCE: $((1 + RANDOM % 10))
+          PATH_TO_DATA_FILE: ~/wct_app/data
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: run dependencies check
+          command: |
+            . venv/bin/activate
+            safety check
+
+      - run:
+          name: lint code
+          command: |
+            . venv/bin/activate
+            cd ~/wct_app
+            pylint --errors-only **/*.py
+
+      - run:
+          name: test code
+          command: |
+            . venv/bin/activate
+            cd ~/wct_app
+            pytest --disable-warnings --quiet tests/wct_tests.py
+
+      - run:
+          name: validate that it runs and returns 200
+          command: |
+            . venv/bin/activate
+            cd ~/wct_app
+            gunicorn -D -w 4 --log-level debug --capture-output --error-logfile errors.log wct_app.main.app:APP
+            curl -X POST http://localhost/api/v0/widgetize -d '{"widget_material":"make me a widget!"}'
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
