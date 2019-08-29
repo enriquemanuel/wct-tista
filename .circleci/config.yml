@@ -5,6 +5,7 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/wct_app
     docker:
       - image: circleci/python:3.7.4
 
