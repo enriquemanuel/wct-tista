@@ -44,6 +44,8 @@ jobs:
           name: test code
           command: |
             . venv/bin/activate
+            pwd
+            ls -lsa
             cd wct_app
             pytest --disable-warnings --quiet tests/wct_tests.py
 
