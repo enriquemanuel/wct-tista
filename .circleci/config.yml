@@ -52,14 +52,6 @@ jobs:
             cd wct_app
             pytest --disable-warnings --quiet tests/wct_tests.py
 
-      - run:
-          name: validate that it runs and returns 200
-          command: |
-            . venv/bin/activate
-            cd wct_app
-            gunicorn -D -w 4 --log-level debug --capture-output --error-logfile errors.log wct_app.main.app:APP
-            curl -X POST http://localhost/api/v0/widgetize -d '{"widget_material":"make me a widget!"}'
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
