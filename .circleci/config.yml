@@ -8,11 +8,15 @@ jobs:
     docker:
       - image: circleci/python:3.7.4
         environment:
-          SECRET_SAUCE: $((1 + RANDOM % 10))
           PATH_TO_DATA_FILE: wct_app/data
 
     steps:
       - checkout
+
+      - run: create env variables (Random values)
+        command: |
+           echo 'export SECRET_SAUCE='$((1 + RANDOM % 10)) >> $BASH_ENV
+           source $BASH_ENV
 
       - run:
           name: install dependencies
