@@ -22,11 +22,6 @@ jobs:
             cd wct_app/
             pip install -r requirements.txt
 
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
       - run:
           name: run dependencies check
           command: |
