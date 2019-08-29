@@ -15,8 +15,11 @@ jobs:
       - run:
           name: create env variables (Random values)
           command: |
+            cd wct_app/
+            version=$(cat .version)
             echo 'export SECRET_SAUCE='$((1 + RANDOM % 10)) >> $BASH_ENV
             echo 'export PATH_TO_DATA_FILE=data' >> $BASH_ENV
+            echo 'export WCT_VERSION='$version >> $BASH_ENV
             source $BASH_ENV
 
       - run:
