@@ -1,0 +1,57 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    working_directory: ~/wct_app
+    docker:
+      - image: circleci/python:3.7.4
+
+    steps:
+      - checkout
+
+      - run:
+          name: create env variables (Random values)
+          command: |
+            cd wct_app/
+            version=$(cat .version)
+            echo 'export SECRET_SAUCE='$((1 + RANDOM % 10)) >> $BASH_ENV
+            echo 'export PATH_TO_DATA_FILE=data' >> $BASH_ENV
+            echo 'export WCT_VERSION='$version >> $BASH_ENV
+            source $BASH_ENV
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            cd wct_app/
+            pip install -r requirements.txt
+
+      - run:
+          name: run dependencies check
+          command: |
+            . venv/bin/activate
+            safety check
+
+      - run:
+          name: lint code
+          command: |
+            . venv/bin/activate
+            cd wct_app
+            pylint --errors-only **/*.py
+
+      - run:
+          name: test code
+          command: |
+            . venv/bin/activate
+            pwd
+            ls -lsa
+            cd wct_app
+            pytest --disable-warnings --quiet tests/wct_tests.py
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
