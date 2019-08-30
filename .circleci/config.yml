@@ -37,14 +37,14 @@ jobs:
           name: lint code
           command: |
             . venv/bin/activate
+            cd wct_app
             pylint --errors-only **/*.py
 
       - run:
           name: test code
           command: |
             . venv/bin/activate
-            pwd
-            ls -lsa
+            cd wct_app
             pytest --disable-warnings --quiet tests/wct_tests.py
 
       - store_artifacts:
