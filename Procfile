@@ -1,3 +1,3 @@
-release: ./heroku_setup.sh
+release: bash heroku_setup.sh
 
 web: gunicorn --workers=4 --log-level debug wct_app.main.app:APP
